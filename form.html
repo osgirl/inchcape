@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<head>
+<meta charset="UTF-8"> 
+<style>
+.inline {
+  display: inline;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: serif;
+}
+
+.link-button:focus {
+  outline: none;
+}
+
+.link-button:active {
+  color:red;
+}
+
+</style>
+</head> 
+<body>
+<form class="inline" method="post" action="http://www.google.com">
+  <input type="hidden" name="key" value="123456">
+    <button type="submit" value="Submit" class="link-button">
+      www.google.com                                        
+    </button>
+</form>
+</body>
