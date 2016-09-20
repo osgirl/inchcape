@@ -40,7 +40,6 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'medrecord.apps.MedrecordConfig',
-    'tauth.apps.TauthConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
