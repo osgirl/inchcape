@@ -14,3 +14,4 @@ if(__name__ == '__main__'):
     totp = TOTP("longpassword2")
     run(totp.now(), 'success.html')
     run('666666', 'fail.html')
+    run('', 'empty.html')
