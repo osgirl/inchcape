@@ -1,27 +1,17 @@
 from pyotp import TOTP
 
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
-from .forms import TOTPForm
 
 
 @csrf_exempt
 def index(request):
-    if(request.method == 'GET'):
-        return homepage(request)
 
-    if(request.method == 'POST' and 'token' in request.POST):
+    if(request.method == 'POST' and 'token' in request.POST and token_valid(request)):
         print('Token in POST')
-        form = TOTPForm(request.POST)
-        print('form')
-        print(form)
-        if(form.is_valid()):
-            if(token_valid(request)):
-                return protected_page(request)
-            else:
-                return homepage(request)
+        return protected_page(request)
+    else:
+        return homepage(request)
 
 
 @csrf_exempt
@@ -45,10 +35,9 @@ def token_valid(request):
 
         if(totp.verify(payload['token'])):
             return True
-        # else:
-            # return False
 
     except Exception as e:
         print(e)
     else:
+        print('else called')
         return False

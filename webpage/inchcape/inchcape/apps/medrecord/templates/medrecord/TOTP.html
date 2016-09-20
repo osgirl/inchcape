@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-
-
-{% block content %}
-    <form method="POST" class="totp-form">{% csrf_token %}
-        {{ form.field.as_hidden }}
-    </form>
-{% endblock %}
