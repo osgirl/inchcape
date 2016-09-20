@@ -3,7 +3,4 @@ hidden content.
 
 Django-Bell-Rock
 
-Uses a decorator: @BellRock(secret_key)
-requres a POST with a key value pair of "token"="onetimekey"
-
 Remember to prevent multiple requests from the same IP.

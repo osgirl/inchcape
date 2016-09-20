@@ -6,14 +6,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def index(request):
-    if(token_valid(request)):
+    if(token_valid(request, "longpassword2")):
         return HttpResponse('This is the secret page')
     else:
         return HttpResponse('This is the home page')
 
 
-def token_valid(request):
-    totp = TOTP("longpassword2")
+def token_valid(request, secret_key):
+    totp = TOTP(secret_key)
 
     try:
         if(request.method == 'POST' and 'token' in request.POST):
