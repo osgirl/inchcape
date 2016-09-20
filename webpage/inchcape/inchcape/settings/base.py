@@ -32,22 +32,16 @@ DJANGO_APPS = [
     'django.contrib.sites',
 ]
 
-THIRD_PARTY_APPS = [
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-]
-
 LOCAL_APPS = [
-    'medrecord.apps.MedrecordConfig',
+    #'medrecord.apps.MedrecordConfig',
+    'homepage.apps.HomepageConfig',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 SITE_ID = 1
 
 MIDDLEWARE_CLASSES = [
-    # 'medrecord.middleware.MedRecordMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
