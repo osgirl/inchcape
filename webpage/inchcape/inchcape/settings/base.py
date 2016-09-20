@@ -1,10 +1,12 @@
 import os
 import sys
 
-# PATH vars
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-root = lambda *x: os.path.join(BASE_DIR, *x)
+
+
+def root(*x):
+    return os.path.join(BASE_DIR, *x)
 
 sys.path.insert(0, root('apps'))
 
@@ -20,20 +22,33 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
-PROJECT_APPS = []
+THIRD_PARTY_APPS = [
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+]
 
-INSTALLED_APPS += PROJECT_APPS
+LOCAL_APPS = [
+    'medrecord.apps.MedrecordConfig',
+    'tauth.apps.TauthConfig',
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = [
+    # 'medrecord.middleware.MedRecordMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,7 +70,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inchcape',
-        'USER': 'postgres',
+        'USER': '',
         'PASSWORD': '',
         'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',  # Set to empty string for default.
@@ -64,14 +79,10 @@ DATABASES = {
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-gb'
-
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-
 USE_I18N = False
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -108,8 +119,19 @@ TEMPLATES = [
     }
 ]
 
-# Password validation
 
+# Re-direct user to homepage after successful log-in
+LOGIN_REDIRECT_URL = '/'
+
+# ######### BASIC ADMIN MANAGED USER SETTINGS ###########
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+
+# Prevent users from registering.
+ACCOUNT_ADAPTER = 'inchcape.account_adapter.NoNewUsersAccountAdapter'
+
+
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -136,3 +158,5 @@ except ImportError:
 # importing test settings file if necessary
 if IN_TESTING:
     from .testing import *  # noqa
+
+print('base settings')

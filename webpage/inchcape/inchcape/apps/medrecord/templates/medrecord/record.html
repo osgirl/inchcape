@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="homepage">
+    <h3>{{ medrecord.name }}</h3>
+    {% load static %}
+    <img src="{% static '/img/me_s.png' %}"/>
+    <p>
+        Allergies:<br>
+        {% for allergy in medrecord.allergies %}
+            {{ allergy }}<br>
+        {% endfor %}
+    </p>
+    <p>
+    Medical History:<br>
+        {% for diagnosis in medrecord.diagnoses %}
+            {{ diagnosis }}<br>
+        {% endfor %}
+    </p>
+</div>
+{% endblock %}
