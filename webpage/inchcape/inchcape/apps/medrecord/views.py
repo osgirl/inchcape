@@ -1,11 +1,9 @@
 from pyotp import TOTP
 
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
 
-from .models import MedRecord
 from .forms import TOTPForm
 
 
@@ -39,14 +37,13 @@ def homepage(request):
 
 def token_valid(request):
     totp = TOTP("longpassword2")
-    valid_totp = totp.now()
 
     raw_payload = request.read()
     try:
         # Load the payload into a dictionary.
         payload = dict(item.split("=") for item in raw_payload.decode('utf8').split("&"))
 
-        if(payload['token'] == valid_totp):
+        if(totp.verify(payload['token'])):
             return True
         # else:
             # return False
