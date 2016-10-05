@@ -16,23 +16,28 @@
 """
 Advertises a url as an Eddystone beacon.
 """
-import os
-import sys
-import subprocess
 import argparse
+import os
+from pyotp import TOTP
+import subprocess
+import sys
+import time
 
-if (sys.version_info > (3, 0)): 
+if (sys.version_info > (3, 0)):
     DEVNULL = subprocess.DEVNULL
 else:
     DEVNULL = open(os.devnull, 'wb')
+
 # The default url
-url = "https://goo.gl/SkcDTN"
+url = 'https://kmaddux.com/'
+key = 'longpassword2'
+totp = TOTP(key)
 
-parser = argparse.ArgumentParser(prog='advertise-url', description= __doc__)
+parser = argparse.ArgumentParser(prog='advertise-url', description=__doc__)
 parser.add_argument("-u", "--url", nargs='?', const=url, type=str,
-    default=url, help='URL to advertise.')
+                    default=url, help='URL to advertise.')
 
-parser.add_argument('-s','--stop', action='store_true',
+parser.add_argument('-s', '--stop', action='store_true',
                     help='Stop advertising url.')
 
 parser.add_argument("-v", "--verbose", action='store_true',
@@ -55,7 +60,7 @@ extensions = [
         ]
 
 
-def verboseOutput(text = ""):
+def verboseOutput(text=""):
     if options.verbose:
         sys.stderr.write(text + "\n")
 
@@ -110,7 +115,7 @@ def encodeMessage(url):
             0xaa,   # 16-bit Eddystone UUID
             0xfe,   # 16-bit Eddystone UUID
 
-            5 + len(encodedurl), # Service Data length
+            5 + len(encodedurl),    # Service Data length
             0x16,   # Service Data data type value
             0xaa,   # 16-bit Eddystone UUID
             0xfe,   # 16-bit Eddystone UUID
@@ -133,7 +138,8 @@ def advertise(url):
     message.insert(0, len(message))
 
     # Pad message to 32 bytes for hcitool
-    while len(message) < 32: message.append(0x00)
+    while len(message) < 32:
+        message.append(0x00)
 
     # Make a list of hex strings from the list of numbers
     message = map(lambda x: "%02x" % x, message)
@@ -142,29 +148,34 @@ def advertise(url):
     message = " ".join(message)
     verboseOutput("Message: " + message)
 
-    subprocess.call("sudo hciconfig hci0 up", shell = True, stdout = DEVNULL)
+    subprocess.call("sudo hciconfig hci0 up", shell=True, stdout=DEVNULL)
 
     # Stop advertising
-    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 00", shell = True, stdout = DEVNULL)
+    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 00", shell=True, stdout=DEVNULL)
 
     # Set message
-    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x0008 " + message, shell = True, stdout = DEVNULL)
+    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x0008 " + message, shell=True, stdout=DEVNULL)
 
     # Resume advertising
-    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 01", shell = True, stdout = DEVNULL)
+    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 01", shell=True, stdout=DEVNULL)
 
 
 def stopAdvertising():
     print("Stopping advertising")
     verboseOutput("Stopping advertising")
-    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 00", shell = True, stdout = DEVNULL)
+    subprocess.call("sudo hcitool -i hci0 cmd 0x08 0x000a 00", shell=True, stdout=DEVNULL)
 
 
 try:
     if options.stop:
         stopAdvertising()
     else:
-        advertise(url)
+        while(True):
+            otp = str(totp.now())
+            print(otp)
+            advertise(url + otp)
+            time.sleep(1)
+
 except Exception as e:
     sys.stderr.write("Exception: " + str(e) + "\n")
     exit(1)
